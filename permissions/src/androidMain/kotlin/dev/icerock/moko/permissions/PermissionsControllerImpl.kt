@@ -114,9 +114,9 @@ class PermissionsControllerImpl(
             fragmentManagerHolder.filterNotNull().first()
         } ?: error(
             "fragmentManager is null, `bind` function was never called," +
-                " consider calling permissionsController.bind(lifecycle, fragmentManager)" +
-                " or BindEffect(permissionsController) in the composable function," +
-                " check the documentation for more info: " +
+                    " consider calling permissionsController.bind(lifecycle, fragmentManager)" +
+                    " or BindEffect(permissionsController) in the composable function," +
+                    " check the documentation for more info: " +
                     "https://github.com/icerockdev/moko-permissions/blob/master/README.md"
         )
     }
@@ -144,13 +144,14 @@ class PermissionsControllerImpl(
             Permission.WRITE_STORAGE -> listOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
             Permission.LOCATION -> fineLocationCompat()
             Permission.COARSE_LOCATION -> listOf(Manifest.permission.ACCESS_COARSE_LOCATION)
+            Permission.BACKGROUND_LOCATION -> backgroundLocationCompat()
             Permission.REMOTE_NOTIFICATION -> remoteNotificationsPermissions()
             Permission.RECORD_AUDIO -> listOf(Manifest.permission.RECORD_AUDIO)
             Permission.BLUETOOTH_LE -> allBluetoothPermissions()
             Permission.BLUETOOTH_SCAN -> bluetoothScanCompat()
             Permission.BLUETOOTH_ADVERTISE -> bluetoothAdvertiseCompat()
             Permission.BLUETOOTH_CONNECT -> bluetoothConnectCompat()
-            Permission.CONTACTS-> listOf(Manifest.permission.READ_CONTACTS,Manifest.permission.WRITE_CONTACTS)
+            Permission.CONTACTS -> listOf(Manifest.permission.READ_CONTACTS, Manifest.permission.WRITE_CONTACTS)
             Permission.MOTION -> motionPermissions()
         }
     }
@@ -190,6 +191,13 @@ class PermissionsControllerImpl(
             )
         } else {
             listOf(Manifest.permission.ACCESS_FINE_LOCATION)
+        }
+
+    private fun backgroundLocationCompat() =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            listOf(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+        } else {
+            emptyList()
         }
 
     /**
